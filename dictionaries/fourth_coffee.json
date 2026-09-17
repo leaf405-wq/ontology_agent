@@ -1,0 +1,156 @@
+{
+  "name": "Fourth Coffee",
+  "description": "A coffee retail supply-chain ontology aligned with Microsoft Fabric Ontology Playground (6 entities, 7 relationships).",
+  "entities": [
+    {
+      "id": "customer",
+      "name": "Customer",
+      "icon": "👤",
+      "color": "#0078D4",
+      "description": "A person who purchases coffee products from stores",
+      "properties": [
+        { "name": "customerId", "type": "string", "identifier": true, "description": "Unique customer identifier" },
+        { "name": "name", "type": "string", "description": "Full name of the customer" },
+        { "name": "email", "type": "string", "description": "Contact email address" },
+        { "name": "loyaltyTier", "type": "enum", "values": ["Bronze", "Silver", "Gold", "Platinum"], "description": "Loyalty program tier" },
+        { "name": "joinDate", "type": "date", "description": "Date the customer joined" },
+        { "name": "totalSpend", "type": "decimal", "unit": "USD", "description": "Lifetime spend amount", "metric": "sales" }
+      ]
+    },
+    {
+      "id": "order",
+      "name": "Order",
+      "icon": "🧾",
+      "color": "#107C10",
+      "description": "A customer purchase transaction at a store",
+      "properties": [
+        { "name": "orderId", "type": "string", "identifier": true, "description": "Unique order identifier" },
+        { "name": "timestamp", "type": "datetime", "description": "When the order was placed" },
+        { "name": "total", "type": "decimal", "unit": "USD", "description": "Total order amount", "metric": "sales" },
+        { "name": "status", "type": "enum", "values": ["Pending", "Preparing", "Ready", "Completed", "Cancelled"] },
+        { "name": "paymentMethod", "type": "enum", "values": ["Card", "Cash", "Mobile", "Gift Card"] }
+      ]
+    },
+    {
+      "id": "product",
+      "name": "Product",
+      "icon": "☕",
+      "color": "#5C2D91",
+      "description": "A coffee product or item available for sale",
+      "properties": [
+        { "name": "productId", "type": "string", "identifier": true },
+        { "name": "name", "type": "string" },
+        { "name": "category", "type": "enum", "values": ["Espresso", "Brewed", "Cold Brew", "Tea", "Food", "Merchandise"] },
+        { "name": "price", "type": "decimal", "unit": "USD" },
+        { "name": "origin", "type": "string" },
+        { "name": "isOrganic", "type": "boolean" }
+      ]
+    },
+    {
+      "id": "store",
+      "name": "Store",
+      "icon": "🏪",
+      "color": "#FFB900",
+      "description": "A physical coffee shop location",
+      "properties": [
+        { "name": "storeId", "type": "string", "identifier": true },
+        { "name": "name", "type": "string" },
+        { "name": "city", "type": "string" },
+        { "name": "state", "type": "string" },
+        { "name": "openDate", "type": "date" },
+        { "name": "capacity", "type": "integer" }
+      ]
+    },
+    {
+      "id": "supplier",
+      "name": "Supplier",
+      "icon": "🚚",
+      "color": "#D83B01",
+      "description": "A coffee bean or goods supplier partner",
+      "properties": [
+        { "name": "supplierId", "type": "string", "identifier": true },
+        { "name": "name", "type": "string" },
+        { "name": "country", "type": "string" },
+        { "name": "certification", "type": "enum", "values": ["Fair Trade", "Rainforest Alliance", "Organic", "Direct Trade", "None"] },
+        { "name": "rating", "type": "decimal", "description": "Quality rating 1-5", "metric": "rating" }
+      ]
+    },
+    {
+      "id": "shipment",
+      "name": "Shipment",
+      "icon": "📦",
+      "color": "#00A9E0",
+      "description": "A delivery of goods from supplier to store",
+      "properties": [
+        { "name": "shipmentId", "type": "string", "identifier": true },
+        { "name": "dispatchDate", "type": "date" },
+        { "name": "arrivalDate", "type": "date" },
+        { "name": "status", "type": "enum", "values": ["In Transit", "Delivered", "Delayed"] },
+        { "name": "weight", "type": "decimal", "unit": "kg" }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "customer_places_order",
+      "name": "places",
+      "from": "customer",
+      "to": "order",
+      "cardinality": "one-to-many",
+      "description": "A customer places one or more orders"
+    },
+    {
+      "id": "order_contains_product",
+      "name": "contains",
+      "from": "order",
+      "to": "product",
+      "cardinality": "many-to-many",
+      "description": "An order contains one or more products",
+      "attributes": [
+        { "name": "quantity", "type": "integer" },
+        { "name": "lineTotal", "type": "decimal", "metric": "sales" }
+      ]
+    },
+    {
+      "id": "order_processed_at_store",
+      "name": "processedAt",
+      "from": "order",
+      "to": "store",
+      "cardinality": "many-to-one",
+      "description": "An order is processed at a specific store"
+    },
+    {
+      "id": "product_sourced_from_supplier",
+      "name": "sourcedFrom",
+      "from": "product",
+      "to": "supplier",
+      "cardinality": "many-to-one",
+      "description": "A product is sourced from a supplier"
+    },
+    {
+      "id": "shipment_from_supplier",
+      "name": "sentBy",
+      "from": "shipment",
+      "to": "supplier",
+      "cardinality": "many-to-one",
+      "description": "A shipment is sent by a supplier"
+    },
+    {
+      "id": "shipment_to_store",
+      "name": "deliveredTo",
+      "from": "shipment",
+      "to": "store",
+      "cardinality": "many-to-one",
+      "description": "A shipment is delivered to a store"
+    },
+    {
+      "id": "shipment_contains_product",
+      "name": "carries",
+      "from": "shipment",
+      "to": "product",
+      "cardinality": "many-to-many",
+      "description": "A shipment carries products",
+      "attributes": [{ "name": "quantity", "type": "integer" }]
+    }
+  ]
+}

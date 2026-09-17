@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ontology ChatBI Playground</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <strong>Ontology Playground</strong>
+      <span>Python · NL2SQL · ChatBI</span>
+    </div>
+    <div class="meta" id="ont-name">Fourth Coffee</div>
+  </header>
+  <main>
+    <aside>
+      <h2>数据字典</h2>
+      <p class="hint">输入与 Fourth Coffee 同结构的 JSON（entities + relationships），即可重生本体图。</p>
+      <textarea id="dict" spellcheck="false" placeholder="粘贴数据字典 JSON…"></textarea>
+      <button id="reload">从字典生成本体</button>
+      <h2>示例提问</h2>
+      <ul id="examples">
+        <li>customer 最大的销售和最大的 supplier</li>
+        <li>销售额最高的顾客</li>
+        <li>列出所有供应商</li>
+        <li>最大的 shipment</li>
+        <li>How does customer connect to supplier?</li>
+      </ul>
+    </aside>
+    <section class="stage">
+      <form id="prompt">
+        <input id="q" autocomplete="off" placeholder="用自然语言提问，例如：customer 最大的销售和最大的 supplier" />
+        <button type="submit">查询</button>
+      </form>
+      <div id="graph"></div>
+      <p class="interp" id="interp">完整本体图 · 6 实体 · 7 关系。提问后会裁剪相关子图。</p>
+    </section>
+    <aside class="facts">
+      <h2>ChatBI Facts</h2>
+      <div id="facts"><p class="hint">查询后显示顾客/供应商等实例度量。</p></div>
+      <h2>NL2SQL</h2>
+      <pre id="sql">-- 等待提问</pre>
+    </aside>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
